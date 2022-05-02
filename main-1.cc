@@ -8,7 +8,7 @@
 
 using namespace std;
 
-bool argparse(int &argc, char* argv[], string &algo, int vecsize);
+bool argparse(int &argc, char* argv[], string &algo, vector<int> &vec);
 void print_vec(std::vector<int> &v1);
 vector<int> take_int(const string &str);
 
@@ -16,10 +16,6 @@ int main(int argc, char *argv[]) {
 	vector<int> vec;
 	string algo;
 	argparse(argc, argv, algo, vec);
-	srand(unsigned(time(nullptr)));
-	for(int i=0; i<SIZE; i++) {
-		v1.push_back(SIZE-i-1);
-	}
 	cout << "Unsorted vector: ";
 	print_vec(vec);
 	Sort(vec,algo);

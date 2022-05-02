@@ -14,7 +14,7 @@
 #include <vector>
 #include <string>
 
-#define THRESHOLD 100
+#define THRESHOLD 2
 
 void Sort(std::vector<int> &, const std::string &);
 void sortMerge(std::vector<int>::iterator, std::vector<int>::iterator);
