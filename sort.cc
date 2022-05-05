@@ -15,9 +15,11 @@
 using std::vector;
 using std::string;
 
-void merge(const vector<int>::iterator begin, const vector<int>::iterator end, const vector<int>::iterator mid) {
-	vector<int> left(begin,mid);
-	vector<int> right(mid,end);
+template <typename RandomIt>
+void merge(RandomIt begin, RandomIt end, RandomIt mid) {
+	typedef typename std::iterator_traits<RandomIt>::value_type value_type;
+	vector<value_type> left(begin,mid);
+	vector<value_type> right(mid,end);
 	auto itr_in1 = begin;
 	auto itr_left = left.begin();
 	auto itr_right = right.begin();
@@ -36,10 +38,11 @@ void merge(const vector<int>::iterator begin, const vector<int>::iterator end, c
 	}
 }
 
-void sortMerge(const vector<int>::iterator begin, const vector<int>::iterator end) {
+template <typename RandomIt>
+void sortMerge(RandomIt begin, RandomIt end, const int Threshold) {
 	auto size = distance(begin,end);
 	auto mid = begin+(size/2);
-	if(size < THRESHOLD) {
+	if(size < Threshold) {
 		sortInsertion(begin,end);
 		return;
 	}
@@ -48,13 +51,16 @@ void sortMerge(const vector<int>::iterator begin, const vector<int>::iterator en
 	merge(begin,end,mid);
 }
 
-void swap(vector<int>::iterator itr1, vector<int>::iterator itr2) {
-	int temp = *itr1;
+template <typename RandomIt>
+void Swap(RandomIt itr1, RandomIt itr2) {
+	typedef typename std::iterator_traits<RandomIt>::value_type value_type;
+	value_type temp = *itr1;
 	*itr1 = *itr2;
 	*itr2 = temp; 
 }
 
-vector<int>::iterator partition(std::vector<int>::iterator begin, std::vector<int>::iterator end) {
+template <typename RandomIt>
+auto partition(RandomIt begin, RandomIt end) {
 	// select rightmost element as pivot
 	auto itr_pivot = prev(end,1);
 
@@ -67,17 +73,18 @@ vector<int>::iterator partition(std::vector<int>::iterator begin, std::vector<in
 		if(*itr < *itr_pivot) {
 			// if element smaller than pivot is found
 			// swap it with the greater element pointed by itr_greater
-			swap(itr_greater++,itr);	
+			Swap(itr_greater++,itr);	
 		}
 	}
 	// swap pivot with the greater element at itr_greater
-	swap(itr_greater,itr_pivot);
+	Swap(itr_greater,itr_pivot);
 	return (itr_greater);
 }
 
-void sortQuick(const vector<int>::iterator begin, const vector<int>::iterator end) {
+template <typename RandomIt>
+void sortQuick(RandomIt begin, RandomIt end, const int Threshold) {
 	auto size = distance(begin,end);
-	if(size < THRESHOLD || size < 2) {
+	if(size < Threshold || size < 2) {
 		sortInsertion(begin,end);
 		return;
 	}
@@ -90,7 +97,8 @@ void sortQuick(const vector<int>::iterator begin, const vector<int>::iterator en
 	sortQuick(itr_pivot+1,end);
 }
 
-void sortInsertion(vector<int>::iterator begin,vector<int>::iterator end) {
+template <typename RandomIt>
+void sortInsertion(RandomIt begin, RandomIt end) {
 	for(auto itr = begin; itr != end; itr++) {
 		// search
 		auto const itr_insertion_pt = upper_bound(begin,itr,*itr);
@@ -99,12 +107,18 @@ void sortInsertion(vector<int>::iterator begin,vector<int>::iterator end) {
 	}
 }
 
-void Sort(vector<int> &in1, const string &algo) {
+template <typename RandomIt>
+void Sort(RandomIt begin, RandomIt end, const string &algo, const int Threshold) {
 	if(algo=="MERGESORT") {
-		sortMerge(in1.begin(),in1.end());
+		sortMerge(begin,end,Threshold);
 	} else if(algo=="QUICKSORT") {
-		sortQuick(in1.begin(),in1.end());
+		sortQuick(begin,end,Threshold);
 	} else {
-		sortInsertion(in1.begin(), in1.end());
+		sortInsertion(begin,end);
 	}
 }
+
+void dummy(){
+	vector<int> vec{};
+	Sort(vec.begin(), vec.end(), "", THRESHOLD);
+};

@@ -15,10 +15,11 @@ vector<int> take_int(const string &str);
 int main(int argc, char *argv[]) {
 	vector<int> vec;
 	string algo;
+    int Threshold = THRESHOLD;
 	argparse(argc, argv, algo, vec);
 	cout << "Unsorted vector: ";
 	print_vec(vec);
-	Sort(vec,algo);
+	Sort(vec.begin(),vec.end(),algo, Threshold);
 	cout << "Sorted vector: ";
 	print_vec(vec);
 	if(is_sorted(vec.begin(),vec.end()))
