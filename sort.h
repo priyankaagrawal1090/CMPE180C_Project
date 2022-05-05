@@ -16,8 +16,6 @@
 using std::vector;
 using std::string;
 
-#define THRESHOLD 100
-
 template <typename RandomIt> void sortMerge(RandomIt, RandomIt, const int);
 template <typename RandomIt> void merge(RandomIt, RandomIt, RandomIt);
 template <typename RandomIt> void Sort(RandomIt, RandomIt, const std::string &, const int);

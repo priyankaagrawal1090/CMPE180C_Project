@@ -8,6 +8,8 @@
 
 using namespace std;
 
+#define THRESHOLD 100;
+
 bool argparse(int &argc, char* argv[], string &algo, vector<int> &vec);
 void print_vec(std::vector<int> &v1);
 vector<int> take_int(const string &str);
