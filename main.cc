@@ -12,11 +12,13 @@ int main() {
 	// Supply seed to random function
 	srand(time(0));
 
-	// test single threaded merge sort for vector of integers
+	// test single and multi threaded merge sort for vector of integers
 	vector<int> vec = generate_vec<int>(SIZE);
+	vector<int> vec_single = vec;
+	vector<int> vec_multi = vec;
 	string algo = "MERGESORT";
-	test_single_thread<int>(ref(vec),ref(algo),THRESHOLD);
-
+	test_single_thread<int>(ref(vec_single),ref(algo),THRESHOLD);
+	test_multi_thread<int>(ref(vec_multi),ref(algo),THRESHOLD);
 	return 0;
 }
 
