@@ -4,8 +4,13 @@
 #include<thread>
 #include<string>
 #include<algorithm>
+#include "sort.h"
 
 #define THRESHOLD 2
+
+bool compare(int elem1,int elem2){
+	return elem1>elem2;
+}
 
 int main(){
 	
@@ -24,10 +29,12 @@ int main(){
 		std::cout<<a[i]<<'\t';																											//randomly generate the array elements
 	}
 
-	auto start = std::chrono::high_resolution_clock::now();	
-																											//start time of the sorting function(using Single thread)
+	auto a_begin = a.begin();
+	auto a_end = a.end();
 
-	std::thread singlethreadMerge(Sort<int>,a.begin(),a.end(),"MERGESORT");
+	auto start = std::chrono::high_resolution_clock::now();	//start time of the sorting function(using Single thread)
+
+	std::thread singlethreadMerge(Sort,std::ref(a_begin),std::ref(a_end),"MERGESORT",THRESHOLD,compare);
 
 	singlethreadMerge.join();
 
@@ -40,15 +47,19 @@ int main(){
 		std::cout<<a[i]<<'\t';
 	}
 
+	auto b_begin = b.begin();
+	auto b_end = b.end();
+	auto b_mid = b.begin()+size/2;
+
 	auto start1 = std::chrono::high_resolution_clock::now();												//start time of the sorting function(using Multithreading)
 
-	std::thread firstMerge (Sort<int>,b.begin(),b.begin()+size/2,"MERGESORT");									//creating thread 1
-	std::thread secondMerge (Sort<int>,b.begin()+size/2,b.end(),"MERGESORT");									//creating thread 2
+	std::thread firstMerge (Sort<int>,std::ref(b_begin),std::ref(b_mid),"MERGESORT",THRESHOLD,compare);									//creating thread 1
+	std::thread secondMerge (Sort<int>,std::ref(b_mid),std::ref(b_end),"MERGESORT",THRESHOLD,compare);									//creating thread 2
 
 	firstMerge.join();																						//wait for the thread1 to complete	
 	secondMerge.join();																						//wait for the thread2 to complete
 	
-	std::thread thirdMerge (merge<int>,b.begin(),b.end(),b.begin()+size/2);										//creating the third merging thread
+	std::thread thirdMerge (merge<int>,std::ref(b_begin),std::ref(b_end),std::ref(b_mid),compare);										//creating the third merging thread
 	
 	thirdMerge.join();																						//wait for the 3rd thread to complete
 
@@ -61,9 +72,12 @@ int main(){
 		std::cout<<b[i]<<'\t';
 	}
 
+	auto c_begin = c.begin();
+	auto c_end = c.end();
+
 	auto start2 = std::chrono::high_resolution_clock::now();												//start time of the sorting function(using Single thread)
 
-	std::thread singlethreadQuick(Sort<int>,c.begin(),c.end(),"QUICKSORT");
+	std::thread singlethreadQuick(Sort<int>,std::ref(c_begin),std::ref(c_end),"QUICKSORT",THRESHOLD,compare);
 
 	singlethreadQuick.join();
 
@@ -75,16 +89,20 @@ int main(){
 	for(int i=0;i<size;i++){
 		std::cout<<c[i]<<'\t';
 	}
-
+	
+	auto d_begin = d.begin();
+	auto d_end = d.end();
+	auto d_mid = d.begin()+size/2;
+	
 	auto start3 = std::chrono::high_resolution_clock::now();												//start time of the sorting function(using Multithreading)
 
-	std::thread firstQuick (Sort<int>,d.begin(),d.begin()+size/2,"QUICKSORT");									//creating thread 1
-	std::thread secondQuick (Sort<int>,d.begin()+size/2,d.end(),"QUICKSORT");									//creating thread 2
+	std::thread firstQuick (Sort<int>,std::ref(d_begin),std::ref(d_mid),"QUICKSORT",THRESHOLD,compare);									//creating thread 1
+	std::thread secondQuick (Sort<int>,std::ref(d_mid),std::ref(d_end),"QUICKSORT",THRESHOLD,compare);									//creating thread 2
 
 	firstQuick.join();																						//wait for the thread1 to complete	
 	secondQuick.join();																						//wait for the thread2 to complete
 	
-	std::thread thirdQuick (merge<int>,d.begin(),d.end(),d.begin()+size/2);										//creating the third merging thread
+	std::thread thirdQuick (merge<int>,std::ref(d_begin),std::ref(d_end),std::ref(d_mid),compare);										//creating the third merging thread
 	
 	thirdQuick.join();																						//wait for the 3rd thread to complete
 
