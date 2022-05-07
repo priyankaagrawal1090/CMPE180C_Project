@@ -4,10 +4,15 @@
 #define THRESHOLD   100
 #define SIZE        10000000
 
+struct Result{
+    bool    pass;
+    int     time;
+};
+
 template <typename T> void print_vec(vector<T> &);
 template <typename T> vector<T> generate_vec(int);
-template <typename T> void test_single_thread(vector<T> &,const string &, const int);
-template <typename T> void test_multi_thread(vector<T> &,const string &, const int);
+template <typename T> Result test_single_thread(vector<T> &,const string &, const int);
+template <typename T> Result test_multi_thread(vector<T> &,const string &, const int);
 
 template <typename T>
 void print_vec(vector<T> &v1) {
@@ -30,7 +35,7 @@ vector<T> generate_vec(int size){
 }
 
 template <typename T>
-void test_single_thread(vector<T> & vec,const string & algo, const int Threshold) {
+Result test_single_thread(vector<T> & vec,const string & algo, const int Threshold) {
     auto itr_beg = vec.begin();
     auto itr_end = vec.end();
     //start time of the sorting function(using Single thread)
@@ -41,6 +46,10 @@ void test_single_thread(vector<T> & vec,const string & algo, const int Threshold
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     
+    Result result;
+    result.pass = is_sorted(vec.begin(),vec.end());
+    result.time = duration.count();
+
     std::cout << "\n###################################\n";
     std::cout << "# Testing single thread sort\n";
     std::cout << "###################################\n";
@@ -48,12 +57,14 @@ void test_single_thread(vector<T> & vec,const string & algo, const int Threshold
     std::cout << "\tAlgorithm: " << algo << "\n";
     std::cout << "\tThreshold: " << Threshold << "\n";
     std::cout << "\tSorting result: " << is_sorted(vec.begin(),vec.end()) << "\n";
-    std::cout << "\tDuration: " << duration.count() << "ms\n";
+    std::cout << "\tDuration: " << duration.count() << "us\n";
     std::cout << "\n\n";
+
+    return result;
 }
 
 template <typename T>
-void test_multi_thread(vector<T> & vec,const string & algo, const int Threshold) {
+Result test_multi_thread(vector<T> & vec,const string & algo, const int Threshold) {
     auto itr_beg = vec.begin();
     auto itr_mid = vec.begin()+(vec.size()/2);
     auto itr_end = vec.end();
@@ -71,6 +82,10 @@ void test_multi_thread(vector<T> & vec,const string & algo, const int Threshold)
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     
+    Result result;
+    result.pass = is_sorted(vec.begin(),vec.end());
+    result.time = duration.count();
+
     std::cout << "\n###################################\n";
     std::cout << "# Testing Multi thread sort\n";
     std::cout << "###################################\n";
@@ -78,8 +93,10 @@ void test_multi_thread(vector<T> & vec,const string & algo, const int Threshold)
     std::cout << "\tAlgorithm: " << algo << "\n";
     std::cout << "\tThreshold: " << Threshold << "\n";
     std::cout << "\tSorting result: " << is_sorted(vec.begin(),vec.end()) << "\n";
-    std::cout << "\tDuration: " << duration.count() << "ms\n";
+    std::cout << "\tDuration: " << duration.count() << "us\n";
     std::cout << "\n\n";
+
+    return result;
 }
 
 #endif //__MAIN_H_
