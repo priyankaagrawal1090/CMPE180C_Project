@@ -34,7 +34,7 @@ int main(){
 
 	auto start = std::chrono::high_resolution_clock::now();	//start time of the sorting function(using Single thread)
 
-	std::thread singlethreadMerge(Sort,std::ref(a_begin),std::ref(a_end),"MERGESORT",THRESHOLD,compare);
+	std::thread singlethreadMerge(Sort<int>,std::ref(a_begin),std::ref(a_end),"MERGESORT",THRESHOLD,compare);
 
 	singlethreadMerge.join();
 
