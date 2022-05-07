@@ -9,7 +9,7 @@ CFLAGS = -pthread -std=c++14
 main: main.o
 	$(CC) $(CFLAGS) -o main main.o
 
-main.o: main.cc sort.h
+main.o: main.cc sort.h main.h test.h
 	$(CC) $(CFLAGS) -c main.cc
 
 clean:
