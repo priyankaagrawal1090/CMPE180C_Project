@@ -11,6 +11,7 @@ struct Result{
 
 template <typename T> void print_vec(vector<T> &);
 template <typename T> vector<T> generate_vec(int);
+template <typename T> bool Less(const T &, const T &);
 template <typename T> Result test_single_thread(vector<T> &,const string &, const int);
 template <typename T> Result test_multi_thread(vector<T> &,const string &, const int);
 
@@ -35,13 +36,22 @@ vector<T> generate_vec(int size){
 }
 
 template <typename T>
+bool Less(const T & a, const T & b)
+{
+	if(a == b)
+		return a > b;
+
+	return a < b;
+}
+
+template <typename T>
 Result test_single_thread(vector<T> & vec,const string & algo, const int Threshold) {
     auto itr_beg = vec.begin();
     auto itr_end = vec.end();
     //start time of the sorting function(using Single thread)
     auto start = std::chrono::high_resolution_clock::now();
     // Create a single thread using lamda function
-    std::thread t0( [&itr_beg,&itr_end,&algo,&Threshold] () {Sort(itr_beg,itr_end,algo,Threshold);} );
+    std::thread t0( [&itr_beg,&itr_end,&algo,&Threshold] () {Sort(itr_beg,itr_end,algo,Threshold,Less<T>);} );
     t0.join();
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -71,13 +81,13 @@ Result test_multi_thread(vector<T> & vec,const string & algo, const int Threshol
     //start time of the sorting function(using Single thread)
     auto start = std::chrono::high_resolution_clock::now();
     // Create two parallel single threads using lamda function
-    std::thread t0( [&itr_beg,&itr_mid,&algo,&Threshold] () {Sort(itr_beg,itr_mid,algo,Threshold);} );
-    std::thread t1( [&itr_mid,&itr_end,&algo,&Threshold] () {Sort(itr_mid,itr_end,algo,Threshold);} );
+    std::thread t0( [&itr_beg,&itr_mid,&algo,&Threshold] () {Sort(itr_beg,itr_mid,algo,Threshold,Less<T>);} );
+    std::thread t1( [&itr_mid,&itr_end,&algo,&Threshold] () {Sort(itr_mid,itr_end,algo,Threshold,Less<T>);} );
     // Join both threads
     t0.join();
     t1.join();
     // Spawn a third thread for merge
-    std::thread t2( [&itr_beg,&itr_end,&itr_mid] () {merge(itr_beg,itr_end,itr_mid);} );
+    std::thread t2( [&itr_beg,&itr_end,&itr_mid] () {merge(itr_beg,itr_end,itr_mid,Less<T>);} );
     t2.join();
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);

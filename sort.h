@@ -16,16 +16,16 @@
 using std::vector;
 using std::string;
 
-template <typename RandomIt> void sortMerge(RandomIt, RandomIt, const int);
-template <typename RandomIt> void merge(RandomIt, RandomIt, RandomIt);
-template <typename RandomIt> void Sort(RandomIt, RandomIt, const std::string &, const int);
-template <typename RandomIt> void sortQuick(RandomIt, RandomIt, const int);
-template <typename RandomIt> auto partition(RandomIt, RandomIt);
+template <typename RandomIt, typename Compare> void sortMerge(RandomIt, RandomIt, const int, Compare);
+template <typename RandomIt, typename Compare> void merge(RandomIt, RandomIt, RandomIt, Compare);
+template <typename RandomIt, typename Compare> void Sort(RandomIt, RandomIt, const std::string &, const int, Compare);
+template <typename RandomIt, typename Compare> void sortQuick(RandomIt, RandomIt, const int, Compare);
+template <typename RandomIt, typename Compare> auto Partition(RandomIt, RandomIt, Compare);
 template <typename RandomIt> void Swap(RandomIt, RandomIt);
 template <typename RandomIt> void sortInsertion(RandomIt, RandomIt);
 
-template <typename RandomIt>
-void merge(RandomIt begin, RandomIt end, RandomIt mid) {
+template <typename RandomIt, typename Compare>
+void merge(RandomIt begin, RandomIt end, RandomIt mid, Compare cmp) {
 	typedef typename std::iterator_traits<RandomIt>::value_type value_type;
 	vector<value_type> left(begin,mid);
 	vector<value_type> right(mid,end);
@@ -33,7 +33,7 @@ void merge(RandomIt begin, RandomIt end, RandomIt mid) {
 	auto itr_left = left.begin();
 	auto itr_right = right.begin();
 	while( (itr_left < left.end()) && (itr_right < right.end()) ) {
-		if(*itr_left < *itr_right) {
+		if(cmp(*itr_left,*itr_right)) {
 			*itr_in1++ = *itr_left++;
 		} else {
 			*itr_in1++ = *itr_right++;
@@ -47,17 +47,17 @@ void merge(RandomIt begin, RandomIt end, RandomIt mid) {
 	}
 }
 
-template <typename RandomIt>
-void sortMerge(RandomIt begin, RandomIt end, const int Threshold) {
+template <typename RandomIt, typename Compare>
+void sortMerge(RandomIt begin, RandomIt end, const int Threshold, Compare cmp) {
 	auto size = distance(begin,end);
 	auto mid = begin+(size/2);
 	if(size < Threshold) {
 		sortInsertion(begin,end);
 		return;
 	}
-	sortMerge(begin,mid,Threshold);
-	sortMerge(mid,end,Threshold);
-	merge(begin,end,mid);
+	sortMerge(begin,mid,Threshold,cmp);
+	sortMerge(mid,end,Threshold,cmp);
+	merge(begin,end,mid,cmp);
 }
 
 template <typename RandomIt>
@@ -68,8 +68,8 @@ void Swap(RandomIt itr1, RandomIt itr2) {
 	*itr2 = temp; 
 }
 
-template <typename RandomIt>
-auto partition(RandomIt begin, RandomIt end) {
+template <typename RandomIt, typename Compare>
+auto Partition(RandomIt begin, RandomIt end, Compare cmp) {
 	// select rightmost element as pivot
 	auto itr_pivot = prev(end,1);
 
@@ -79,7 +79,7 @@ auto partition(RandomIt begin, RandomIt end) {
 	// traverse each element of the array
 	// compare them with the pivot
 	for(auto itr = begin; itr != itr_pivot; itr++) {
-		if(*itr < *itr_pivot) {
+		if(cmp(*itr,*itr_pivot)) {
 			// if element smaller than pivot is found
 			// swap it with the greater element pointed by itr_greater
 			Swap(itr_greater++,itr);	
@@ -90,8 +90,8 @@ auto partition(RandomIt begin, RandomIt end) {
 	return (itr_greater);
 }
 
-template <typename RandomIt>
-void sortQuick(RandomIt begin, RandomIt end, const int Threshold) {
+template <typename RandomIt, typename Compare>
+void sortQuick(RandomIt begin, RandomIt end, const int Threshold, Compare cmp) {
 	auto size = distance(begin,end);
 	if(size < Threshold || size < 2) {
 		sortInsertion(begin,end);
@@ -100,10 +100,10 @@ void sortQuick(RandomIt begin, RandomIt end, const int Threshold) {
 	// find the pivot element such that
     // elements smaller than pivot are on left of pivot
     // elements greater than pivot are on righ of pivot
-	auto itr_pivot = partition(begin,end);
+	auto itr_pivot = Partition(begin,end,cmp);
 	// recursive call on the left and right of pivot
-	sortQuick(begin,itr_pivot,Threshold);
-	sortQuick(itr_pivot+1,end,Threshold);
+	sortQuick(begin,itr_pivot,Threshold,cmp);
+	sortQuick(itr_pivot+1,end,Threshold,cmp);
 }
 
 template <typename RandomIt>
@@ -116,12 +116,12 @@ void sortInsertion(RandomIt begin, RandomIt end) {
 	}
 }
 
-template <typename RandomIt>
-void Sort(RandomIt begin, RandomIt end, const string &algo, const int Threshold) {
+template <typename RandomIt, typename Compare>
+void Sort(RandomIt begin, RandomIt end, const string &algo, const int Threshold, Compare cmp) {
 	if(algo=="MERGESORT") {
-		sortMerge(begin,end,Threshold);
+		sortMerge(begin,end,Threshold,cmp);
 	} else if(algo=="QUICKSORT") {
-		sortQuick(begin,end,Threshold);
+		sortQuick(begin,end,Threshold,cmp);
 	} else {
 		sortInsertion(begin,end);
 	}
