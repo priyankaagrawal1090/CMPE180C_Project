@@ -22,7 +22,7 @@ template <typename RandomIt, typename Compare> void Sort(RandomIt, RandomIt, con
 template <typename RandomIt, typename Compare> void sortQuick(RandomIt, RandomIt, const int, Compare);
 template <typename RandomIt, typename Compare> auto Partition(RandomIt, RandomIt, Compare);
 template <typename RandomIt> void Swap(RandomIt, RandomIt);
-template <typename RandomIt> void sortInsertion(RandomIt, RandomIt);
+template <typename RandomIt, typename Compare> void sortInsertion(RandomIt, RandomIt, Compare);
 
 template <typename RandomIt, typename Compare>
 void merge(RandomIt begin, RandomIt end, RandomIt mid, Compare cmp) {
@@ -52,7 +52,7 @@ void sortMerge(RandomIt begin, RandomIt end, const int Threshold, Compare cmp) {
 	auto size = distance(begin,end);
 	auto mid = begin+(size/2);
 	if(size < Threshold) {
-		sortInsertion(begin,end);
+		sortInsertion(begin,end,cmp);
 		return;
 	}
 	sortMerge(begin,mid,Threshold,cmp);
@@ -94,7 +94,7 @@ template <typename RandomIt, typename Compare>
 void sortQuick(RandomIt begin, RandomIt end, const int Threshold, Compare cmp) {
 	auto size = distance(begin,end);
 	if(size < Threshold || size < 2) {
-		sortInsertion(begin,end);
+		sortInsertion(begin,end,cmp);
 		return;
 	}
 	// find the pivot element such that
@@ -106,14 +106,19 @@ void sortQuick(RandomIt begin, RandomIt end, const int Threshold, Compare cmp) {
 	sortQuick(itr_pivot+1,end,Threshold,cmp);
 }
 
-template <typename RandomIt>
-void sortInsertion(RandomIt begin, RandomIt end) {
-	for(auto itr = begin; itr != end; itr++) {
-		// search
-		auto const itr_insertion_pt = upper_bound(begin,itr,*itr);
-		// insert
-		rotate(itr_insertion_pt,itr,itr+1);
-	}
+template <typename RandomIt, typename Compare>
+void sortInsertion(RandomIt begin, RandomIt end, Compare cmp) {
+    for(auto itr = begin+1; itr != end; itr++) {
+        auto key = itr;
+        for (auto i = itr-1; i >= begin; i--) {
+            if (cmp(*key,*i)) {
+                Swap(key,i);
+                key--;
+            } else {
+                break;
+            }
+        }
+    }
 }
 
 template <typename RandomIt, typename Compare>
@@ -123,7 +128,7 @@ void Sort(RandomIt begin, RandomIt end, const string &algo, const int Threshold,
 	} else if(algo=="QUICKSORT") {
 		sortQuick(begin,end,Threshold,cmp);
 	} else {
-		sortInsertion(begin,end);
+		sortInsertion(begin,end,cmp);
 	}
 }
 
