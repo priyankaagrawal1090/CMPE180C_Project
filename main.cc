@@ -11,7 +11,8 @@
 
 using namespace std;
 
-bool compare(int a, int b)
+template<typename T>
+bool compare(T a, T b)
 {
 	return a < b;
 }
