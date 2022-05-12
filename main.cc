@@ -4,7 +4,6 @@
 #include <chrono>
 #include "sort.h"
 #include "main.h"
-#include "test.h"
 
 #define THRESHOLD   100
 #define SIZE        10000
