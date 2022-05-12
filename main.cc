@@ -33,14 +33,14 @@ int main() {
 	string algo[2] = {"MERGESORT","QUIICKSORT"};
 	Result result_single_merge, result_multi_merge, result_single_quick, result_multi_quick;
 
-	result_single_merge = test_single_thread<int>(ref(vec_single_merge),ref(algo[0]),THRESHOLD,SIZE,&compare);
-	result_multi_merge = test_multi_thread<int>(ref(vec_multi_merge),ref(algo[0]),THRESHOLD,SIZE,&compare);
+	result_single_merge = test_single_thread<int>(ref(vec_single_merge),ref(algo[0]),THRESHOLD,&compare);
+	result_multi_merge = test_multi_thread<int>(ref(vec_multi_merge),ref(algo[0]),THRESHOLD,&compare);
 	cout << "Execution time for single thread: " << result_single_merge.time << " us\n";
 	cout << "Execution time for multi thread: " << result_multi_merge.time << " us\n";
 	cout << "Speedup: " <<  result_single_merge.time - result_multi_merge.time << " us\n";
 
-	result_single_quick = test_single_thread<int>(ref(vec_single_quick),ref(algo[1]),THRESHOLD,SIZE,&compare);
-	result_multi_quick = test_multi_thread<int>(ref(vec_multi_quick),ref(algo[1]),THRESHOLD,SIZE,&compare);
+	result_single_quick = test_single_thread<int>(ref(vec_single_quick),ref(algo[1]),THRESHOLD,&compare);
+	result_multi_quick = test_multi_thread<int>(ref(vec_multi_quick),ref(algo[1]),THRESHOLD,&compare);
 	cout << "Execution time for single thread: " << result_single_quick.time << " us\n";
 	cout << "Execution time for multi thread: " << result_multi_quick.time << " us\n";
 	cout << "Speedup: " <<  result_single_quick.time - result_multi_quick.time << " us\n\n";
